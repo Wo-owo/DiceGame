@@ -23,7 +23,7 @@ public class Dice : MonoBehaviour
         currentValue = UnityEngine.Random.Range(1, sides + 1);
         
         // 在这里添加你想要执行的点数技能或效果
-
+        numText.text = currentValue.ToString();        
         Debug.Log(bianhao+"号骰子点数: " + currentValue);
     }
 
