@@ -16,7 +16,13 @@ public class EnemyDisplay : MonoBehaviour
     public int num;//编号
 
     private void Start() {
-        GetComponent<Image>().sprite=enemy.sprite;
+        if(enemy.enemysprite==null){
+            Debug.Log("怪物图像为空");
+        }
+        else{
+            GetComponent<Image>().sprite=enemy.enemysprite;
+        }
+        
         hp = enemy.maxHp;
         attack=enemy.attack;
         

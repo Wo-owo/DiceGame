@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
             Destroy(instance);
         }
         instance = this;
-
         // 初始化骰子列表，将每个骰子添加到列表中
         foreach (Transform child in transform)
         {
@@ -57,6 +56,7 @@ public class GameManager : MonoBehaviour
         currentTurn = Turn.none;//初始化回合为无
         turnPanel.gameObject.SetActive(false);
 
+        //levelnum = 1;
     }
 
     // Update is called once per frame

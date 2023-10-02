@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -14,55 +16,99 @@ public class LevelData
     public EnemyData[] enemies;
 }
 
+[System.Serializable]
+public class EnemiesList
+{
+    public LevelData[] levels;
+}
+
 public class LevelManager : MonoBehaviour
 {
     public GameObject enemyPrefab; // 预制体1
     public TextAsset levelJson; // 将 JSON 文件拖拽到该字段
-    public EnemiesList enemiesList;//怪物列表
+    
+    public EnemyPool enemyPool;
+    public GameObject enemyPanel;//怪物池
+    public int levelnum; //关卡数
 
     private void Start()
     {
+        levelnum = GameManager.instance.levelnum;
         LoadLevel();
+        
+    }
+
+    public void UpdateLevelNum(int _num)
+    {
+        levelnum = _num;
     }
 
     private void LoadLevel()
     {
-        // 将 JSON 数据转换为 LevelData 对象
-        LevelData levelData = JsonUtility.FromJson<LevelData>(levelJson.ToString());
+        // 将 JSON 数据转换为 EnemiesList 对象
+        EnemiesList enemiesList = JsonUtility.FromJson<EnemiesList>(levelJson.ToString());
 
-        // 输出关卡信息
-        Debug.Log("Level: " + levelData.level);
+        // 查找指定关卡数据
+        LevelData levelData = FindLevelData(levelnum, enemiesList);
 
-        foreach (EnemyData enemyData in levelData.enemies)
+        if (levelData != null)
         {
-            // 根据 JSON 数据生成怪物
-            GenerateEnemies(enemyData.type, enemyData.count);
+            // 输出关卡信息
+            Debug.Log("Level: " + levelData.level);
+
+            foreach (EnemyData enemyData in levelData.enemies)
+            {
+                // 根据 JSON 数据生成怪物
+                GenerateEnemies(enemyData.type, enemyData.count);
+            }
         }
+        else
+        {
+            Debug.LogError("Level data not found for level " + levelnum);
+        }
+    }
+
+    private LevelData FindLevelData(int targetLevel, EnemiesList enemiesList)
+    {
+        foreach (LevelData levelData in enemiesList.levels)
+        {
+            if (levelData.level == targetLevel)
+            {
+                return levelData;
+            }
+        }
+
+        return null;
     }
 
     private void GenerateEnemies(string enemyType, int count)
     {
-        Debug.Log("执行GenerateEnemies，准备生成"+enemyType);
-        GameObject _newPrefab = Instantiate(enemyPrefab);
-        string _temp="";
-        // 根据怪物类型选择对应的预制体
-        switch (enemyType)
+        // 在这里根据怪物类型和数量生成怪物
+        for (int i = 0; i < count; i++)
         {
-            case "史莱姆":
-                _temp = "slime";
-                break;
-            case "假人":
-                _temp = "fakeTest";
-                break;
-            // 可以添加更多类型的预制体
-        }
-        _newPrefab.GetComponent<EnemyDisplay>().enemy = enemiesList.enemies.Find(x=>x.name ==_temp);
-        
-    }
+            Debug.Log("生成"+enemyType);
+            string _temp = "";
 
-    // private Vector3 GetRandomSpawnPosition()
-    // {
-    //     // 在实际游戏中，你可能需要编写逻辑来获取有效的随机生成位置
-    //     return new Vector3(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));
-    // }
+            GameObject _newObj = Instantiate(enemyPrefab,enemyPanel.transform);
+
+            switch(enemyType){
+                case "假人":
+                    _temp = "fakeTest";
+                    break;
+                case "哥布林":
+                    _temp = "goblin";
+                    break;
+                
+            }
+
+            Debug.Log(enemyPool.enemies.Find(x=>x.name==_temp));
+
+            _newObj.GetComponent<EnemyDisplay>().enemy = enemyPool.enemies.Find(x=>x.name==_temp);
+
+            //_newObj.GetComponent<EnemyDisplay>().enemy = enemiesList.
+            // GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+            // // 在这里设置怪物的类型和其他属性
+            // enemy.GetComponent<Enemy>().Initialize(enemyType);
+        }
+    }
 }

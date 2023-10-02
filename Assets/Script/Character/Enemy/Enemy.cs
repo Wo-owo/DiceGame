@@ -6,7 +6,7 @@ using TMPro;
 [CreateAssetMenu(fileName = "New Enemy", menuName = "Enemy")]
 public class Enemy : ScriptableObject
 {
-    public Sprite sprite;
+    public Sprite enemysprite;
     public string enemyName;
     public int hp;
     public int maxHp;

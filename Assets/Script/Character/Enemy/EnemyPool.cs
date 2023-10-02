@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName ="New EnemiesList",menuName ="EnemiesList",order =0)]
-public class EnemiesList : ScriptableObject
-{
+[CreateAssetMenu(fileName = "EnemyPool", menuName = "DiceGame/EnemyPool", order = 0)]
+public class EnemyPool : ScriptableObject {
     public List<Enemy> enemies = new List<Enemy>();
 }
+
