@@ -1,7 +1,8 @@
 using UnityEngine;
 using System;
 using TMPro;
-public class Dice : MonoBehaviour
+using UnityEngine.EventSystems;
+public class Dice : MonoBehaviour,IPointerClickHandler
 {
     [SerializeField] public int sides = 6; // 骰子的面数，默认为6
     [SerializeField] public bool canBeModified = false; // 是否允许修改骰子属性
@@ -42,5 +43,10 @@ public class Dice : MonoBehaviour
     /// <summary>调整骰子面数变回初始</summary>
     public void ReModifiedSide(){
         sides = 6;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        GameManager.instance.ChooseDice(this);
     }
 }

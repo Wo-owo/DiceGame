@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
-public class EnemyDisplay : MonoBehaviour
+using UnityEngine.EventSystems;
+public class EnemyDisplay : MonoBehaviour,IPointerClickHandler
 {
     public Enemy enemy;
     public int hp;
@@ -46,5 +46,11 @@ public class EnemyDisplay : MonoBehaviour
             GameManager.instance.EnemyDeath(num);
             Destroy(this);
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("点击到了敌人");
+        
     }
 }

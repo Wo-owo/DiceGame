@@ -31,10 +31,19 @@ public class LevelManager : MonoBehaviour
     public GameObject enemyPanel;//怪物池
     public int levelnum; //关卡数
 
+    public static LevelManager instance;
+
+    private void Awake() {
+        if(instance!=null){
+            Destroy(instance);
+        }
+        instance=this;
+        levelnum = GameManager.instance.levelnum;
+    }
     private void Start()
     {
-        levelnum = GameManager.instance.levelnum;
-        LoadLevel();
+        
+        //LoadLevel();
         
     }
 
@@ -43,7 +52,7 @@ public class LevelManager : MonoBehaviour
         levelnum = _num;
     }
 
-    private void LoadLevel()
+    public void LoadLevel()
     {
         // 将 JSON 数据转换为 EnemiesList 对象
         EnemiesList enemiesList = JsonUtility.FromJson<EnemiesList>(levelJson.ToString());
