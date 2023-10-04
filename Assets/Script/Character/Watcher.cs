@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Watcher :  Character 
+using UnityEngine.EventSystems;
+public class Watcher :  Character ,IPointerClickHandler
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        
+        base.Start();
+        hp = maxHp;
+        hpText.text = hp.ToString()+"/"+maxHp.ToString();
     }
-
-    // Update is called once per frame
-    void Update()
+    public void OnPointerClick(PointerEventData eventData)
     {
-        
+        if(isDeath){
+            Debug.Log(this.name+"已经死亡");
+            return;
+        } 
+
+        Debug.Log("点击了"+this.name);
+        if(charaType==CharaType.player){
+            GameManager.instance.SelectCharacter(this);
+        }
     }
 }

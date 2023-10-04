@@ -1,12 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Magical :  Character 
+using UnityEngine.EventSystems;
+public class Magical :  Character ,IPointerClickHandler
 {
     protected override void Start()
     {
         base.Start();
-        //skills.Add(SkillLibrary.Fireball);
+        hp = maxHp;
+        hpText.text = hp.ToString()+"/"+maxHp.ToString();
+    }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(isDeath){
+            Debug.Log(this.name+"已经死亡");
+            return;
+        } 
+
+        Debug.Log("点击了"+this.name);
+        if(charaType==CharaType.player){
+            GameManager.instance.SelectCharacter(this);
+        }
     }
 }

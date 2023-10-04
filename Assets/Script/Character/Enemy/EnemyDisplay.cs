@@ -54,7 +54,7 @@ public class EnemyDisplay : MonoBehaviour,IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GameManager.instance.EnemySelected(this.gameObject);
+        //GameManager.instance.EnemySelected(this);
         Debug.Log("点击到了敌人"+enemyDatas.name);
     }
 }

@@ -20,9 +20,9 @@ public class Skill
     }
 }
 
-public class SkillManager:MonoBehaviour
+public class CombatManager:MonoBehaviour
 {
-    public static SkillManager instance;
+    public static CombatManager instance;
     private void Awake() {
         if(instance!=null){
             Destroy(instance);
@@ -34,17 +34,16 @@ public class SkillManager:MonoBehaviour
             Debug.Log(_var);
         }
 
-        string _functionName = (string)_varObj[0];
-        int _amountOfDice = (int)_varObj[1];
+        string _functionName = (string)_varObj[1];
+        int _amountOfDice = (int)_varObj[2];
         Type type = GetType();
-
-        
 
         // 获取函数信息
         MethodInfo method = type.GetMethod(_functionName);
         if (method != null)
         {
-            object[] parameters={};
+
+            object[] parameters=new object[_amountOfDice+1];
             // 函数参数
             switch(_functionName){
                 case "BasicAttack" :
@@ -52,16 +51,24 @@ public class SkillManager:MonoBehaviour
                 parameters[1]=_varObj[_varObj.Count-2];
                 break;
             }
-            // 通过Invoke调用函数，并传递参数
+                // 通过Invoke调用函数，并传递参数
             method.Invoke(this, parameters);
+            var _attacker = (Character)_varObj[0];
+            _attacker.HasAction();
         }
         else
         {
             Debug.LogError("找不到函数：" + _functionName);
         }
+        GameManager.instance.ReinitalizeSkill();
+    }
+    public void BasicAttack(Enemy _target,int _damage){
+        Debug.Log("攻击了"+_target.name);
+        _target.TakeDamage(_damage);
 
     }
-    public void BasicAttack(Character _target,int _damage){
+    public void BasicAttack_2(Enemy _target,int _damage){
+        Debug.Log("攻击了"+_target.name);
         _target.TakeDamage(_damage);
     }
 

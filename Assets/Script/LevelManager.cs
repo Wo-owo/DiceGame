@@ -111,7 +111,7 @@ public class LevelManager : MonoBehaviour
 
             Debug.Log(enemyPool.enemies.Find(x=>x.name==_temp));
            
-            _newObj.GetComponent<EnemyDisplay>().enemyDatas = enemyPool.enemies.Find(x=>x.name==_temp);
+            _newObj.GetComponent<Enemy>().enemyData = enemyPool.enemies.Find(x=>x.name==_temp);
             GameManager.instance.enemyList.Add(_newObj);
             //_newObj.GetComponent<EnemyDisplay>().enemy = enemiesList.
             // GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);

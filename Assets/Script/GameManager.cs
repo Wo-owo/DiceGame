@@ -166,19 +166,7 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    
-
-
-    
-    /// <summary>
-    /// 切换选定的角色
-    /// </summary>
-    public void SelectCharacter(Character character){
-        skillPanel.SetSelectedCharacter(character);
-    }
-    
-    
-    
+   
     public void StartBattle(){
         LevelManager.instance.UpdateLevelNum(levelnum);
         LevelManager.instance.LoadLevel();
@@ -279,13 +267,21 @@ public class GameManager : MonoBehaviour
     }
     
     /// <summary>
+    /// 切换选定的角色
+    /// </summary>
+    public void SelectCharacter(Character _character){
+        Debug.Log("选择了"+_character.name);
+        skillPanel.SetSelectedCharacter(_character);
+        varObj.Add(_character);
+    }
+    
+    /// <summary>
     /// 选择技能
     /// </summary>
     /// <param name="_code"></param>
     /// <param name="_num"></param>
     public void SelectSkill(string _code,int _num){
         //初始化泛型列表
-        varObj.Clear();
         amountOfDice = 0;
         amountLimit = 0;
         //StartCoroutine(WaitForDice(_num));
@@ -301,31 +297,34 @@ public class GameManager : MonoBehaviour
     bool fullDice;
     public void ChooseDice(Dice _dice){
         if(currentTurn==TurnPhase.playerTurn&&isSkill){
-
             if(amountOfDice>amountLimit){
                 Debug.LogWarning("超过该技能指定骰子");
-            }
-            else if(_dice.isSelected==false){
-                _dice.isSelected=true;
-                amountOfDice++;
-                Debug.Log("选定了"+_dice.bianhao+"号骰子");
-                
+                return;
             }
             else if(_dice.isSelected){
                 _dice.isSelected=false;
                 amountOfDice--;
                 Debug.Log("取消了"+_dice.bianhao+"号骰子");
             }
+            else if(_dice.isSelected==false&&!fullDice&&!_dice.isUsed){
+                _dice.isSelected=true;
+                amountOfDice++;
+                Debug.Log("选定了"+_dice.bianhao+"号骰子");
+            }
+            
+            
             if(amountOfDice==amountLimit){
                 fullDice=true;
             }
             else if(amountOfDice <amountLimit){
                 fullDice=false;
             }
+            _dice.selectedSign.SetActive(_dice.isSelected);
         }
         
     }
-    public void EnemySelected(GameObject _obj){
+    public void EnemySelected(Enemy _obj){
+        Debug.Log("选择了敌人");
         if(currentTurn!=TurnPhase.playerTurn){
             Debug.Log("不在玩家回合内");
             return;
@@ -339,8 +338,10 @@ public class GameManager : MonoBehaviour
             }
             varObj.Add(_obj);
             
-            selectedEnemy = _obj;
-            SkillManager.instance.UseSkill_Player(varObj);
+            //electedEnemy = _obj;
+            CombatManager.instance.UseSkill_Player(varObj);
+
+            varObj.Clear();
         }
     }
 
@@ -350,6 +351,7 @@ public class GameManager : MonoBehaviour
     public void ReinitalizeSkill(){
         whichDice = null;
         whichSkill = null;
+        isSkill=false;
         selectedChara = null;
         selectedEnemy = null;
         foreach(var _btn in skillButton){
@@ -360,7 +362,9 @@ public class GameManager : MonoBehaviour
         varObj.Clear();
         foreach(var _dice in diceList){
             if(!_dice.isUsed){
-                _dice.isSelected = false;
+                _dice.SelectedDice(false);
+                _dice.UsedDice(true);
+                
             }
         }
     }

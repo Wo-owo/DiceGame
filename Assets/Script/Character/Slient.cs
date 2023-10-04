@@ -1,30 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Slient :  Character 
+using UnityEngine.EventSystems;
+public class Slient :  Character ,IPointerClickHandler
 {
-    // // Start is called before the first frame update
-    // void Start()
-    // {
-        
-    // }
+    protected override void Start()
+    {
+        base.Start();
+        hp = maxHp;
+        hpText.text = hp.ToString()+"/"+maxHp.ToString();
+    }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(isDeath){
+            Debug.Log(this.name+"已经死亡");
+            return;
+        } 
 
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
-    // public void UseSkill(int skillIndex, Character target)
-    // {
-    //     if (skillIndex >= 0 && skillIndex < skills.Count)
-    //     {
-    //         Skill selectedSkill = skills[skillIndex];
-    //         SkillManager.InflictDamage(this, target, selectedSkill.damage);
-    //     }
-    //     else
-    //     {
-    //         Debug.LogError("Invalid skill index");
-    //     }
-    // }
+        Debug.Log("点击了"+this.name);
+        if(charaType==CharaType.player){
+            GameManager.instance.SelectCharacter(this);
+        }
+    }
 }

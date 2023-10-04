@@ -489,7 +489,7 @@ GameObject:
   - component: {fileID: 9003939538873982400}
   - component: {fileID: 5475545876135577079}
   - component: {fileID: 7861920383525844241}
-  - component: {fileID: 705681059963629793}
+  - component: {fileID: 5085279058105642}
   m_Layer: 5
   m_Name: enemy
   m_TagString: Untagged
@@ -557,7 +557,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &705681059963629793
+--- !u!114 &5085279058105642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -566,15 +566,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 7907472981341917591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06b442b2a56d1164ea09a805af8dfec5, type: 3}
+  m_Script: {fileID: 11500000, guid: 560a041e538a47342bbb7a0280b77558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDatas: {fileID: 0}
+  charaSprite: {fileID: 0}
   hp: 0
   maxHp: 0
-  attack: 0
-  image: {fileID: 0}
+  charaName: 
   hpText: {fileID: 1454524532208540769}
+  charaImage: {fileID: 0}
+  charaType: 0
+  isDeath: 0
+  enemyData: {fileID: 0}
+  attack: 0
   attackText: {fileID: 197411330269451888}
   num: 0
   isAction: 0
