@@ -7,12 +7,15 @@ public class Dice : MonoBehaviour,IPointerClickHandler
     [SerializeField] public int sides = 6; // 骰子的面数，默认为6
     [SerializeField] public bool canBeModified = false; // 是否允许修改骰子属性
 
+    
     public TMP_Text numText;//数字的文字
-    private int currentValue = 1; // 当前骰子的点数
+    public int currentValue = 1; // 当前骰子的点数
 
     //debug用
     public int bianhao;//骰子编号
 
+    public bool isSelected;//被选中
+    public bool isUsed;//被使用过
     private void Start()
     {
         currentValue = 0;
@@ -48,5 +51,7 @@ public class Dice : MonoBehaviour,IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         GameManager.instance.ChooseDice(this);
+        
     }
 }
+ 

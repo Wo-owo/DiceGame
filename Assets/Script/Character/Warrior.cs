@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class Warrior :  Character 
 {
-    // Start is called before the first frame update
-    void Start()
-    {
         
-    }
-
-    // Update is called once per frame
-    void Update()
+    protected override void Start()
     {
-        
+        base.Start();
+        //skills.Add(SkillLibrary.BasicAttack);
+        Skill skill = new Skill("基础攻击","BasicAttack",1);
+        skills.Add(skill);
+        Debug.Log(this.name+"技能数:"+skills.Count);
     }
 }

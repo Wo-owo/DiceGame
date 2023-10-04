@@ -4,14 +4,9 @@ using UnityEngine;
 
 public class Magical :  Character 
 {
-    void Start()
+    protected override void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.Start();
+        //skills.Add(SkillLibrary.Fireball);
     }
 }

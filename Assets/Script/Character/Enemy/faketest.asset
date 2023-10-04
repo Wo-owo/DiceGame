@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 560a041e538a47342bbb7a0280b77558, type: 3}
+  m_Script: {fileID: 11500000, guid: 42982cdaac664e24fb013753fc0df804, type: 3}
   m_Name: fakeTest
   m_EditorClassIdentifier: 
-  enemysprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  enemyName: "\u8BAD\u7EC3\u5047\u4EBA"
-  hp: 5
-  maxHp: 5
-  attack: 0
+  enemyName: "\u5047\u4EBA"
+  maxHealth: 12
+  attack: 1
   defend: 0
+  sprite: {fileID: -161108985, guid: fea9ed1189dc4fb4cbe3c33b5d17a15e, type: 3}

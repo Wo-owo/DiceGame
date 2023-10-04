@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class EnemyData
+public class EnemyData_Level
 {
     public string type;
     public int count;
@@ -13,7 +13,7 @@ public class EnemyData
 public class LevelData
 {
     public int level;
-    public EnemyData[] enemies;
+    public EnemyData_Level[] enemies;
 }
 
 [System.Serializable]
@@ -65,7 +65,7 @@ public class LevelManager : MonoBehaviour
             // 输出关卡信息
             Debug.Log("Level: " + levelData.level);
 
-            foreach (EnemyData enemyData in levelData.enemies)
+            foreach (EnemyData_Level enemyData in levelData.enemies)
             {
                 // 根据 JSON 数据生成怪物
                 GenerateEnemies(enemyData.type, enemyData.count);
@@ -107,13 +107,12 @@ public class LevelManager : MonoBehaviour
                 case "哥布林":
                     _temp = "goblin";
                     break;
-                
             }
 
             Debug.Log(enemyPool.enemies.Find(x=>x.name==_temp));
-
-            _newObj.GetComponent<EnemyDisplay>().enemy = enemyPool.enemies.Find(x=>x.name==_temp);
-
+           
+            _newObj.GetComponent<EnemyDisplay>().enemyDatas = enemyPool.enemies.Find(x=>x.name==_temp);
+            GameManager.instance.enemyList.Add(_newObj);
             //_newObj.GetComponent<EnemyDisplay>().enemy = enemiesList.
             // GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
             // // 在这里设置怪物的类型和其他属性

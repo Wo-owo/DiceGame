@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-[CreateAssetMenu(fileName = "New Enemy", menuName = "Enemy")]
-public class Enemy : ScriptableObject
+using System;
+
+public class Enemy : Character
 {
-    public Sprite enemysprite;
-    public string enemyName;
-    public int hp;
-    public int maxHp;
     public int attack;
     public int defend;
+    public EnemyDatas enemyData;
+
+    
+    protected override void Start()
+    {
+        base.Start();
+        hp=maxHp;
+        //skills = 
+        // 使用 EnemyData 初始化敌人属性
+    }
 }
