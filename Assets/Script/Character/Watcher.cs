@@ -2,24 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-public class Watcher :  Character ,IPointerClickHandler
+public class Watcher : Players
 {
+    //public GameObject selectedSign;
     protected override void Start()
     {
-        base.Start();
+        Skill skill = new Skill("基础攻击","BasicAttack",1);
+        skills.Add(skill);
+        Debug.Log(this.name+"技能数:"+skills.Count);
         hp = maxHp;
         hpText.text = hp.ToString()+"/"+maxHp.ToString();
     }
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if(isDeath){
-            Debug.Log(this.name+"已经死亡");
-            return;
-        } 
 
-        Debug.Log("点击了"+this.name);
-        if(charaType==CharaType.player){
-            GameManager.instance.SelectCharacter(this);
-        }
-    }
 }

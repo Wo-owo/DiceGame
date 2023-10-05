@@ -23,6 +23,7 @@ public class Skill
 public class CombatManager:MonoBehaviour
 {
     public static CombatManager instance;
+    bool isAttack=false;
     private void Awake() {
         if(instance!=null){
             Destroy(instance);
@@ -30,14 +31,14 @@ public class CombatManager:MonoBehaviour
         instance=this;
     }
     public void UseSkill_Player(List<object> _varObj){
+        isAttack=false;
         foreach(var _var in _varObj){
             Debug.Log(_var);
         }
-
         string _functionName = (string)_varObj[1];
         int _amountOfDice = (int)_varObj[2];
         Type type = GetType();
-
+        //var[_attacker,functionName,num,....,_target]
         // 获取函数信息
         MethodInfo method = type.GetMethod(_functionName);
         if (method != null)
@@ -53,23 +54,32 @@ public class CombatManager:MonoBehaviour
             }
                 // 通过Invoke调用函数，并传递参数
             method.Invoke(this, parameters);
-            var _attacker = (Character)_varObj[0];
-            _attacker.HasAction();
+
+            if(isAttack){
+                var _attacker = (Players)_varObj[0];
+                _attacker.HasAction(true);
+                GameManager.instance.AttackSuccess();
+            }
+            else if(!isAttack){
+                GameManager.instance.AttackFailed();
+            }
+            
         }
         else
         {
             Debug.LogError("找不到函数：" + _functionName);
         }
-        GameManager.instance.ReinitalizeSkill();
+        // /GameManager.instance.ReinitalizeSkill();
     }
     public void BasicAttack(Enemy _target,int _damage){
-        Debug.Log("攻击了"+_target.name);
+        Debug.Log("普通攻击，攻击了"+_target.name);
         _target.TakeDamage(_damage);
-
+        isAttack=true;
     }
     public void BasicAttack_2(Enemy _target,int _damage){
-        Debug.Log("攻击了"+_target.name);
+        Debug.Log("普通攻击，攻击了"+_target.name);
         _target.TakeDamage(_damage);
+        isAttack=true;
     }
 
 }

@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public int levelnum;//关卡数
 
     public List<Button> skillButton = new List<Button>();//技能按钮
-    public Character selectedChara;//临时选中的角色
+    public Players selectedChara;//临时选中的角色
     public GameObject selectedEnemy;//临时选中的敌人
     public bool isSkill;//是否选中了技能
     public string whichSkill;//使用哪个技能
@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     bool isBattle;//是否进入战斗
     public SkillPanel skillPanel;
     public List<object> varObj = new List<object>();
+    public List<Dice> useDice = new List<Dice>();
     private void Awake() {
         //初始化单例
         if(instance!=null){
@@ -78,6 +79,7 @@ public class GameManager : MonoBehaviour
         selectedChara=null;
         selectedEnemy=null;
         isSkill=false;
+        isBattle = true;
         //levelnum = 1;
 
         endTurnButton.onClick.AddListener(OnEndTurnButtonClicked);
@@ -92,18 +94,7 @@ public class GameManager : MonoBehaviour
     { 
         //清空重选
         if(Input.GetMouseButtonDown(1)){
-            ReinitalizeSkill();
-            // whichDice = null;
-            // whichSkill = null;
-            // selectedChara = null;
-            // selectedEnemy = null;
-            // foreach(var _btn in skillButton){
-            // _btn.gameObject.SetActive(false);
-
-            // }
-            // amountLimit=0;
-            // amountOfDice=0;
-            // varObj.Clear();
+            ResetSkill();
         }
     }
     /// <summary>投掷所有骰子</summary>
@@ -140,22 +131,6 @@ public class GameManager : MonoBehaviour
             rollButton.interactable= false;
         }
     }
-
-    /// <summary>
-    /// 效果消失
-    /// </summary>
-    void EffectEnd(GameObject _obj,int _id){
-
-    }
-
-    /// <summary> 
-    /// 不存在敌人时结束战斗
-    /// </summary>
-    public void TurnEndBattle(){
-        //currentTurn = Turn.none;
-
-        //结算奖励
-    }
     public void EnemyDeath(int _num){
         Debug.Log("敌人死亡函数EnemyDeath()");
         enemyList.RemoveAt(_num);
@@ -179,17 +154,20 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator BattleLoop()
     {
-        while (true)
+        yield return StartCoroutine(StartBattlePhase());
+        while (isBattle)
         {
-            yield return StartCoroutine(StartBattlePhase());
+            
             yield return StartCoroutine(playerTurnPhase());
             yield return StartCoroutine(EnemyTurnPhase());
+
         }
     }
 
     private IEnumerator StartBattlePhase()
     {
         Debug.Log("开始战斗 Start Battle");
+        isBattle=true;
         // 显示一些战斗开始的UI或效果
 
         // 等待一段时间
@@ -207,11 +185,17 @@ public class GameManager : MonoBehaviour
         // 等待玩家点击结束回合按钮
         while (currentTurn == TurnPhase.playerTurn)
         {
+            GameOver();//游戏结束判定
             yield return null;
         }
-
+        // if(enemyList.Count==0){
+        //     currentTurn = TurnPhase.endBattle;
+        // }
+        // else {
+        //     currentTurn = TurnPhase.enemyTurn;
+        // }
         // 玩家点击结束回合按钮后，切换到敌方回合
-        currentTurn = TurnPhase.enemyTurn;
+        
     }
 
     private IEnumerator EnemyTurnPhase()
@@ -222,7 +206,7 @@ public class GameManager : MonoBehaviour
         //状态机
         foreach(var _enemy in enemyList){
             
-            Character _target = new Character();
+            Character _target ;
             int i=0;
             do{
                 i++;
@@ -230,8 +214,14 @@ public class GameManager : MonoBehaviour
             }while(_target.isDeath==true||i>20);
             if(i>20){
                 Debug.Log("搜寻玩家时溢出！");
+                int a =0;
+                while(a<4){
+                    if(!playerList[a].isDeath){
+                        _target = playerList[a];
+                    }
+                }
             }
-            _target.TakeDamage(_enemy.GetComponent<EnemyDatas>().attack);
+            _target.TakeDamage(_enemy.GetComponent<Enemy>().attack);
             yield return new WaitForSeconds(delayBeforeEnemyTurn);
         }
 
@@ -269,10 +259,23 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 切换选定的角色
     /// </summary>
-    public void SelectCharacter(Character _character){
-        Debug.Log("选择了"+_character.name);
-        skillPanel.SetSelectedCharacter(_character);
-        varObj.Add(_character);
+    public void SelectCharacter(Players _character){
+        Debug.Log("点击了角色");
+        //切换角色就清除临时变量
+        UnableSkill();
+        if(!_character.isAction&&!_character.isDeath){
+            if(selectedChara!=null&&selectedChara!=_character){
+                selectedChara.selectedSign.SetActive(false);
+                
+            }
+            selectedChara = _character;
+            _character.selectedSign.SetActive(true);
+
+            Debug.Log("选择了"+_character.name);
+            skillPanel.SetSelectedCharacter(_character);
+            varObj.Add(_character);
+        }
+        
     }
     
     /// <summary>
@@ -332,8 +335,8 @@ public class GameManager : MonoBehaviour
         if(isSkill&&fullDice){
             foreach(var _dice in diceList){
                 if(!_dice.isUsed&&_dice.isSelected){
+                    useDice.Add(_dice);
                     varObj.Add(_dice.currentValue);
-                    _dice.isUsed=true;
                 }
             }
             varObj.Add(_obj);
@@ -344,9 +347,18 @@ public class GameManager : MonoBehaviour
             varObj.Clear();
         }
     }
+    public void AttackSuccess(){
+        foreach(var _dice in useDice){
+            _dice.UsedDice(true);
+            _dice.SelectedDice(false);
+        }
+    }
+    public void AttackFailed(){
+        UnableSkill(); 
+    }
 
     /// <summary>
-    /// 重设技能
+    /// 重新初始化战斗
     /// </summary>
     public void ReinitalizeSkill(){
         whichDice = null;
@@ -354,21 +366,65 @@ public class GameManager : MonoBehaviour
         isSkill=false;
         selectedChara = null;
         selectedEnemy = null;
+        amountLimit=0;
+        amountOfDice=0;           
+        varObj.Clear();
+        useDice.Clear();
+        foreach(var _dice in diceList){
+                _dice.SelectedDice(false);
+                _dice.UsedDice(false);
+        }
+        foreach(var _chara in playerList){
+            _chara.HasAction(false);
+        }
+    }
+
+    /// <summary>
+    /// 重设技能
+    /// </summary>
+    public void ResetSkill(){
+        whichDice = null;
+        whichSkill = null;
+        isSkill=false;
+        selectedChara = null;
+        selectedEnemy = null;
+        amountLimit=0;
+        amountOfDice=0;    
         foreach(var _btn in skillButton){
         _btn.gameObject.SetActive(false);
         }
         amountLimit=0;
         amountOfDice=0;           
-        varObj.Clear();
         foreach(var _dice in diceList){
-            if(!_dice.isUsed){
+            if(!_dice.isUsed&&_dice.isSelected){
                 _dice.SelectedDice(false);
                 _dice.UsedDice(true);
+            }
+        }
+        varObj.Clear();
+        useDice.Clear();
+        
+    }
+    /// <summary>
+    /// 未成功使用数据
+    /// </summary>
+    public void UnableSkill(){
+        amountLimit=0;
+        amountOfDice=0;           
+        varObj.Clear();
+        useDice.Clear();
+        whichDice = null;
+        whichSkill = null;
+        isSkill=false;
+        //selectedChara = null;
+        selectedEnemy = null;
+        foreach(var _dice in diceList){
+            if(!_dice.isUsed&&_dice.isSelected){
+                _dice.SelectedDice(false);
                 
             }
         }
     }
-
 
     public void GameOver(){
         int a = 0;
@@ -380,11 +436,18 @@ public class GameManager : MonoBehaviour
         }
         if(a>=4){
             StopCoroutine(BattleLoop());
+            isBattle=false;
+            Debug.Log("失败");
+            return;
             //弹出游戏结束界面；
+            
+        }
+        if(enemyList.Count==0){
+            StopCoroutine(BattleLoop());
+            isBattle=false;
+            Debug.Log("胜利");
+            return;
+            
         }
     }
-
-
-    
-    
 }

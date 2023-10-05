@@ -6,16 +6,21 @@ public class SkillPanel : MonoBehaviour
 {
     //public Button[] skillButtons; // 技能按钮数组
     public List<Button> skillButtons = new List<Button>();
-    private Character selectedCharacter; // 当前选中的角色
+    private Players selectedCharacter; // 当前选中的角色
 
     // 设置技能面板的角色
-    public void SetSelectedCharacter(Character _character)
+    public void SetSelectedCharacter(Players _character)
     {
         selectedCharacter = _character;
         Debug.Log("更新"+_character.name+"技能面板");
         UpdateSkillButtons();
     }
 
+    public void HideAllSkill(){
+        foreach(var _btn in skillButtons){
+            _btn.gameObject.SetActive(false);
+        }
+    }
     // 更新技能按钮显示
     private void UpdateSkillButtons()
     {
